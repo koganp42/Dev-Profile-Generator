@@ -170,5 +170,52 @@ function generateHTML(data) {
             zoom: .75; 
           } 
          }
-      </style>`
-        }
+      </style>
+      <body>
+        <main>
+         <div class="wrapper">
+                <div class="photo-header">
+                    <img src=${profImage} alt="Github profile image">
+                    <h1>Hi!</h1> 
+                    <h2>My name is ${userName}!</h2> 
+                    <div class="links-nav">
+                        <a class="nav-link" href=?????><i class="fas fa-map-marker-alt">${userLocation}</i></a>
+                        <a class="nav-link" href=${userGithubLink}><i class="fab fa-github">Github</i></a>
+                        <a class="nav-link" href=${userBlog}><i class="fas fa-blog">Blog</i></a>
+                    </div>
+                </div>
+                <div class="row">
+                  <h3 class="col">${userBio}</h3>
+                </div>
+                <div class="container">
+                  <div class="row">
+                    <div class="col card">
+                      <h4>Public Repositories</h4>
+                      <h6>${publicRepoNum}</h6>
+                    </div>
+                    <div class="col card">
+                      <h4>Followers</h4>
+                      <h6>${followersNum}</h6>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col card">
+                      <h4>Github Stars</h4>
+                      <h6>${gitHubStarsNum}</h6>
+                    </div>
+                    <div class="col card">
+                      <h4>Following</h4>
+                      <h6>${followingNum}</h6>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+            </main>
+      </body>
+    </html>`
+}
+
+module.exports = {
+  colors: colors,
+  generateHTML: generateHTML
+}
