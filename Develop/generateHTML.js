@@ -25,7 +25,7 @@ const colors = {
   }
 };
 
-function generateHTML(data) {
+function generateHTML(data, profImage, userName, googelMapUrl, userLocation, userGithubLink, userBlog, userBio, publicRepoNum, followersNum, gitHubStarsNum, followingNum) {
   return `<!DOCTYPE html>
 <html lang="en">
    <head>
@@ -179,7 +179,7 @@ function generateHTML(data) {
                     <h1>Hi!</h1> 
                     <h2>My name is ${userName}!</h2> 
                     <div class="links-nav">
-                        <a class="nav-link" href=?????><i class="fas fa-map-marker-alt">${userLocation}</i></a>
+                        <a class="nav-link" href=${googelMapUrl}><i class="fas fa-map-marker-alt">${userLocation}</i></a>
                         <a class="nav-link" href=${userGithubLink}><i class="fab fa-github">Github</i></a>
                         <a class="nav-link" href=${userBlog}><i class="fas fa-blog">Blog</i></a>
                     </div>
