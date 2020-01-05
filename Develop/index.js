@@ -11,13 +11,17 @@ let profImage = null;
 let userName = null;
 let userLocation = null;
 let userGithubLink = null;
+let userCompany = null;
 let userBlog = null;
 let userBio = null;
 let publicRepoNum = null;
 let followersNum = null;
 let githubStarsNum = null;
-let followingCount = null;
+let followingNum = null;
+const googleApiKey = "AIzaSyAPg5Dwcw9-O5hcA9WLjNALXCtfjTJLa8s";
 
+
+function init() {
 
 inquirer
     .prompt([
@@ -34,36 +38,42 @@ inquirer
         }
     ])
     .then(function(response){
-        let { githubLogin } = response;
-        let colors = response;
+        let githubLogin = response.github;
+        let colors = response.color;
         let queryUrl = `https://api.github.com/users/${githubLogin}`;
         axios.get(queryUrl)
             .then(function(response_git){
-                profImage = response_git.avatar_url;
-                userName = response_git.name;
-                userGithubLink = response_git.html_url;
-                userBlog = response_git.blog;
-                userBio = response_git.bio;
-                publicRepoNum = response_git.public_repos;
-                followersNum = response_git.followers;
-                followingCount = response_git.following;
-                userLocation = response_git.location;
-                //console.log();
+                profImage = response_git.data.avatar_url;
+                userName = response_git.data.name;
+                console.log(userName);
+                userGithubLink = response_git.data.html_url;
+                userBlog = response_git.data.blog;
+                userBio = response_git.data.bio;
+                userCompany = response_git.data.company;
+                publicRepoNum = response_git.data.public_repos;
+                followersNum = response_git.data.followers;
+                followingNum = response_git.data.following;
+                userLocation = response_git.data.location;
+                console.log(userLocation);
+                let googleGeoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${googleApiKey}`;
+                console.log(googleGeoUrl);
+                return axios.get(googleGeoUrl);
+            }).then(function(geo_response){
+                console.log(geo_response.data.geometry);
+                let userLat = geo_response.data.geometry.location.lat;
+                let userLong = geo_response.data.geometry.location.lng;
             });
+            
         axios.get(queryUrl + "/repos")
-            .then(function(response){
-                response.data.forEach(function(stars){
+            .then(function(response_git_stars){
+                response_git_stars.data.forEach(function(stars){
                     githubStarsNum += stars.stargazers_count;
-                    
                 });
                 console.log(githubStarsNum);
             });
+        //let generateHTML = html;
+
     });
 
-function writeToFile(fileName, data) {
-
-}
-
-function init() {
 }
 init();
