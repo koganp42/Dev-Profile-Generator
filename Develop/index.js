@@ -9,20 +9,18 @@ const conversion = convertFactory({
 
 const googleApiKey = "AIzaSyAPg5Dwcw9-O5hcA9WLjNALXCtfjTJLa8s";
 
-let htmlObj = {
-    profImage: null, 
-    userName: null, 
-    googleMapUrl: null, 
-    userLocation: null, 
-    userGithubLink: null, 
-    userBlog: null, 
-    userBio: null, 
-    publicRepoNum: null, 
-    followersNum: null, 
-    githubStarsNum: 0, 
-    followingNum: null,
-    colors: null
-};
+let profImage = null; 
+let userName = null;
+let googleMapUrl = null; 
+let userLocation = null; 
+let userGithubLink = null; 
+let userBlog = null; 
+let userBio = null; 
+let publicRepoNum = null; 
+let followersNum = null; 
+let githubStarsNum = 0; 
+let followingNum = null;
+let data = null;
 
 async function inq() { 
     return inquirer.prompt([
@@ -50,37 +48,48 @@ async function githubRepoRequest(githubLogin){
 }
 
 async function googleGeoCodeRequest(){
-  	let queryUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${htmlObj.userLocation}&key=${googleApiKey}`;
+  	let queryUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${googleApiKey}`;
 		return axios.get(queryUrl);
 }
 
 async function init() {
   	let userPromptResponse = await inq();
-  	htmlObj.colors = userPromptResponse.color;	
+  	data = userPromptResponse;	
   
   	let githubProfileResponse = await githubProfileRequest(userPromptResponse.github);
     let githubRes = githubProfileResponse.data;
-    htmlObj.profImage = githubRes.avatar_url;
-    htmlObj.userName = githubRes.name;
-    htmlObj.userGithubLink = githubRes.html_url;
-    htmlObj.userBlog = githubRes.blog;
-    htmlObj.userBio = githubRes.bio;
-    htmlObj.userCompany = githubRes.company;
-    htmlObj.publicRepoNum = githubRes.public_repos;
-    htmlObj.followersNum = githubRes.followers;
-    htmlObj.followingNum = githubRes.following;
-    htmlObj.userLocation = githubRes.location;
-    console.log(htmlObj.userLocation);
+    profImage = githubRes.avatar_url;
+    userName = githubRes.name;
+    userGithubLink = githubRes.html_url;
+    userBlog = githubRes.blog;
+    userBio = githubRes.bio;
+    userCompany = githubRes.company;
+    publicRepoNum = githubRes.public_repos;
+    followersNum = githubRes.followers;
+    followingNum = githubRes.following;
+    userLocation = githubRes.location;
+    console.log(userLocation);
 
   	let githubRepoResponse = await githubRepoRequest(userPromptResponse.github);
   	githubRepoResponse.data.forEach(function(repo){
-      htmlObj.githubStarsNum += repo.stargazers_count;
+      githubStarsNum += repo.stargazers_count;
     });
   
   	let googleGeoCodeResponse = await googleGeoCodeRequest();
     let userLat = googleGeoCodeResponse.data.results[0].geometry.location.lat;
     let userLng = googleGeoCodeResponse.data.results[0].geometry.location.lng;
-    htmlObj.googleMapUrl = `https://www.google.com/maps/@${userLat},${userLng},13z`
-    console.log(htmlObj);
+    googleMapUrl = `https://www.google.com/maps/@${userLat},${userLng},11z`
+
+    const htmlPageData = generateHTML.generateHTML(data, profImage, userName, googleMapUrl, userLocation, userGithubLink, userBlog, userBio, publicRepoNum, followersNum, githubStarsNum, followingNum);
+    
+    conversion({html: htmlPageData, delay: 1000}, function(err, result){
+        if (err){
+          return console.log(err); 
+        } 
+        console.log(result.numberOfPages); 
+        console.log("success");
+        result.stream.pipe(fs.createWriteStream(`${userName}.pdf`));
+        conversion.kill(); 
+    });
 }
 init();
