@@ -6,8 +6,9 @@ const fs = require("fs"),
 const conversion = convertFactory({
     converterPath: convertFactory.converters.PDF
 });
+const apikey = require("./apikey")
 
-const googleApiKey = "";
+const googleApiKeyImport = apikey.giveApiKey();
 
 let profImage = null;
 let userName = null;
@@ -49,7 +50,7 @@ async function githubRepoRequest(githubLogin) {
 }
 
 async function googleGeoCodeRequest() {
-    let queryUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${googleApiKey}`;
+    let queryUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${userLocation}&key=${googleApiKeyImport}`;
     return axios.get(queryUrl);
 }
 
